@@ -21,11 +21,12 @@ class HumanPic:
             self.__net = model_zoo.get_model('mask_rcnn_resnet50_v1b_coco', pretrained=True, ctx=mx.gpu(0))
             return [xx[0].asnumpy() for xx in self.__net(x).as_in_context(mx.gpu(0))]
         else:
-            self.__net = model_zoo.get_model('mask_rcnn_resnet50_v1b_coco', pretrained=True)
+            self.__net = model_zoo.get_model('yolo3_darknet53_voc', pretrained=True)
+            # self.__net = model_zoo.get_model('mask_rcnn_resnet50_v1b_coco', pretrained=True)
             return [xx[0].asnumpy() for xx in self.__net(x)]
 
     def get_height(self, pic):
-        ids, scores, bboxes, masks = self.get_thumbnails(pic)
+        ids, scores, bboxes = self.get_thumbnails(pic)
         objects = [(x[0], y) for x, y in zip(ids, scores) if y[0] > self.__accuracy]
         tags = list(set(self.__net.classes[int(x[0])] for x in objects))
         if tags.count("person") > 0:
